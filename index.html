@@ -86,12 +86,17 @@
             border-radius: 1.5rem;
         }
         
-        /* MODIFIÉ: Règle pour inverser le logo en mode clair */
+        /* CORRIGÉ: Nouvelle technique pour le logo avec mix-blend-mode */
         .logo-image {
              transition: filter 0.5s ease;
+             /* Pour le mode sombre: Affiche les parties claires du logo */
+             mix-blend-mode: lighten; 
         }
         [data-theme="light"] .logo-image {
-            filter: invert(100%);
+            /* Pour le mode clair: on inverse le logo (noir -> blanc, blanc -> noir) */
+            filter: invert(1); 
+            /* Ensuite, on affiche les parties sombres (les lettres devenues noires) */
+            mix-blend-mode: darken;
         }
 
     </style>
@@ -121,7 +126,7 @@
              <!-- SECTION LOGO -->
             <div class="flex justify-center my-4">
                 <div class="w-28 h-auto">
-                    <!-- MODIFIÉ: Classe ajoutée pour le ciblage CSS -->
+                    <!-- Classe ajoutée pour le ciblage CSS -->
                     <img src="logo.png" alt="Rattan Palace Logo" class="logo-image">
                 </div>
             </div>
