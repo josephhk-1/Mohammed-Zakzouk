@@ -5,8 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Digital Card - Mohammed Zakzouk</title>
     
-    <link rel="icon" type="image/png" href="logo.png">
-    <link rel="apple-touch-icon" href="logo.png">
+    <!-- Icône mise à jour avec le logo -->
+    <link rel="icon" type="image/jpeg" href="logo.jpeg">
+    <link rel="apple-touch-icon" href="logo.jpeg">
 
     <!-- Intégration de Tailwind CSS pour le style -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -84,6 +85,15 @@
             z-index: 0;
             border-radius: 1.5rem;
         }
+        
+        /* MODIFIÉ: Règle pour inverser le logo en mode clair */
+        .logo-image {
+             transition: filter 0.5s ease;
+        }
+        [data-theme="light"] .logo-image {
+            filter: invert(100%);
+        }
+
     </style>
 </head>
 <body class="flex items-center justify-center min-h-screen p-4">
@@ -108,17 +118,18 @@
                 </button>
             </div>
             
-             <!-- Section Logo -->
+             <!-- SECTION LOGO -->
             <div class="flex justify-center my-4">
                 <div class="w-28 h-auto">
-                    <img src="logoo.png" alt="Rattan Palace Logo">
+                    <!-- MODIFIÉ: Classe ajoutée pour le ciblage CSS -->
+                    <img src="logo.jpeg" alt="Rattan Palace Logo" class="logo-image">
                 </div>
             </div>
 
             <!-- Section Photo et Nom -->
             <div class="flex flex-col items-center text-center">
                 <img class="w-32 h-32 rounded-full mb-4 ring-4 object-cover" 
-                     src="photo.jpg" 
+                     src="photo.jpeg" 
                      alt="Photo de Mohammed Zakzouk"
                      onerror="this.onerror=null;this.src='https://placehold.co/200x200/3A2A25/F5F5DC?text=MZ';"
                      style="border-color: var(--brand-gold);">
@@ -127,12 +138,11 @@
             </div>
             
             <!-- Section Boutons d'action -->
-            <<div class="mt-8 grid grid-cols-2 gap-4">
+            <div class="mt-8 grid grid-cols-2 gap-4">
                 <button onclick="downloadVCard()" class="w-full px-4 py-3 bg-gray-700/80 text-white font-bold rounded-xl hover:bg-gray-700 transition-all duration-300 shadow-lg transform hover:scale-105 flex items-center justify-center">
                     <i class="fas fa-user-plus icon"></i>
                     <span class="ml-2" data-lang="addContact">Add to contacts</span>
                 </button>
-                <!-- MODIFIÉ: Lien du catalogue mis à jour pour forcer le téléchargement -->
                 <a href="https://drive.google.com/uc?export=download&id=1r1_0R6lRmtbLnBcuD6g4bBd-aK9mfQIp" target="_blank" class="w-full px-4 py-3 text-white font-bold rounded-xl hover:opacity-90 transition-all duration-300 shadow-lg transform hover:scale-105 flex items-center justify-center text-center" style="background-color: var(--brand-gold);">
                     <i class="fas fa-download icon"></i>
                     <span class="ml-2" data-lang="companyProfile">Company Profile</span>
