@@ -86,11 +86,11 @@
             border-radius: 1.5rem;
         }
         
-        /* CORRIGÉ: Nouvelle technique pour le logo avec mix-blend-mode */
+        /* CORRIGÉ: Utilisation de 'screen' pour mieux supprimer le fond noir en mode sombre */
         .logo-image {
              transition: filter 0.5s ease;
-             /* Pour le mode sombre: Affiche les parties claires du logo */
-             mix-blend-mode: lighten; 
+             /* Pour le mode sombre: Affiche les parties claires du logo et rend le noir transparent */
+             mix-blend-mode: screen; 
         }
         [data-theme="light"] .logo-image {
             /* Pour le mode clair: on inverse le logo (noir -> blanc, blanc -> noir) */
