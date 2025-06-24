@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" data-theme="dark"> <!-- Démarre en mode sombre par défaut -->
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Digital Card - Mohammed Zakzouk</title>
+    
+    <link rel="icon" type="image/png" href="favicon.png">
+    <link rel="apple-touch-icon" href="favicon.png">
+
+    <!-- Intégration de Tailwind CSS pour le style -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Intégration de Font Awesome pour les icônes -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <!-- Polices Google Fonts : Inter pour l'anglais, Cairo pour l'arabe -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            /* Palette de base */
+            --brand-dark: #3A2A25;
+            --brand-gold: #C5A57E;
+            --brand-light-bg: #F9F6F1;
+            --brand-dark-bg: #1a1412;
+
+            /* Couleurs du thème clair (par défaut) */
+            --bg-color: #F0EAD6;
+            --card-bg-color: rgba(255, 255, 255, 0.8);
+            --text-color: #333333;
+            --text-muted-color: #555555;
+            --icon-color: var(--brand-gold);
+            --particle-color: rgba(197, 165, 126, 0.7);
+
+        }
+
+        [data-theme="dark"] {
+             /* Couleurs du thème sombre */
+            --bg-color: var(--brand-dark-bg);
+            --card-bg-color: rgba(40, 30, 28, 0.85);
+            --text-color: #E5E7EB; /* gray-200 */
+            --text-muted-color: #9CA3AF; /* gray-400 */
+            --icon-color: var(--brand-gold);
+            --particle-color: rgba(197, 165, 126, 0.5);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+            background-color: var(--bg-color);
+            transition: background-color 0.5s ease;
+        }
+
+        html[dir="rtl"] body {
+            font-family: 'Cairo', sans-serif;
+        }
+        
+        #card-container {
+            background-color: var(--card-bg-color);
+            transition: background-color 0.5s ease;
+        }
+        
+        h1, .link-text {
+            color: var(--text-color);
+        }
+        p, .lang-btn {
+             color: var(--text-muted-color);
+        }
+
+        .lang-btn.active {
+            background-color: var(--brand-gold);
+            color: white !important;
+            font-weight: bold;
+        }
+
+        #card-animation-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            border-radius: 1.5rem;
+        }
+    </style>
+</head>
+<body class="flex items-center justify-center min-h-screen p-4">
+
+    <!-- Conteneur principal de la carte -->
+    <div id="card-container" class="relative w-full max-w-md backdrop-blur-md rounded-3xl shadow-2xl p-6 sm:p-8 overflow-hidden">
+        
+        <canvas id="card-animation-canvas"></canvas>
+
+        <!-- Contenu de la carte (au-dessus de l'animation) -->
+        <div class="relative z-10">
+
+            <!-- Section supérieure : Langue et Thème -->
+            <div class="flex justify-between items-center mb-4">
+                <div class="flex border border-gray-400/50 rounded-lg p-1 bg-black/10">
+                    <button id="lang-en" class="lang-btn px-3 py-1 rounded-md text-sm transition-all duration-300">English</button>
+                    <button id="lang-ar" class="lang-btn px-3 py-1 rounded-md text-sm transition-all duration-300">العربية</button>
+                </div>
+                <button id="theme-toggle" class="p-2 rounded-lg bg-black/10 text-lg">
+                    <i class="fas fa-sun" id="theme-icon-light"></i>
+                    <i class="fas fa-moon" id="theme-icon-dark"></i>
+                </button>
+            </div>
+            
+             <!-- Section Logo -->
+            <div class="flex justify-center my-4">
+                <div class="w-28 h-auto">
+                    <svg viewBox="0 0 110 50" fill="var(--icon-color)" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M0 0 H40 V10 H10 V40 H20 V20 H50 V10 H60 V50 H100 V40 H70 V20 H90 V10 H100 V0 H110 V50 H0 V0 Z"/>
+                    </svg>
+                </div>
+            </div>
+
+            <!-- Section Photo et Nom -->
+            <div class="flex flex-col items-center text-center">
+                <img class="w-32 h-32 rounded-full mb-4 ring-4 object-cover" 
+                     src="photo.jpg" 
+                     alt="Photo de Mohammed Zakzouk"
+                     onerror="this.onerror=null;this.src='https://placehold.co/200x200/3A2A25/F5F5DC?text=MZ';"
+                     style="border-color: var(--brand-gold);">
+                <h1 class="text-3xl font-bold mt-4" data-lang="name">Mohammed Zakzouk</h1>
+                <p class="mt-1 font-medium" data-lang="jobTitle">Head Manager of Rattan Palace</p>
+            </div>
+            
+            <!-- Section Boutons d'action -->
+            <div class="mt-8 grid grid-cols-2 gap-4">
+                <button onclick="downloadVCard()" class="w-full px-4 py-3 bg-gray-700/80 text-white font-bold rounded-xl hover:bg-gray-700 transition-all duration-300 shadow-lg transform hover:scale-105 flex items-center justify-center">
+                    <i class="fas fa-user-plus icon"></i>
+                    <span class="ml-2" data-lang="addContact">Add to contacts</span>
+                </button>
+                <a href="#" target="_blank" class="w-full px-4 py-3 text-white font-bold rounded-xl hover:opacity-90 transition-all duration-300 shadow-lg transform hover:scale-105 flex items-center justify-center text-center" style="background-color: var(--brand-gold);">
+                    <i class="fas fa-download icon"></i>
+                    <span class="ml-2" data-lang="companyProfile">Company Profile</span>
+                </a>
+            </div>
+
+            <!-- Section Liens de Contact -->
+            <div class="mt-8 space-y-4">
+                <a href="tel:+966590025566" class="flex items-center p-4 bg-black/5 rounded-xl transition-all duration-300 transform hover:scale-105 hover:bg-black/10">
+                    <i class="fas fa-phone fa-lg w-6 text-center" style="color: var(--icon-color);"></i>
+                    <span class="ml-4 font-semibold link-text" data-lang="callMe">Call me</span>
+                </a>
+                <a href="mailto:Rattanpalace@hotmail.com" class="flex items-center p-4 bg-black/5 rounded-xl transition-all duration-300 transform hover:scale-105 hover:bg-black/10">
+                    <i class="fas fa-envelope fa-lg w-6 text-center" style="color: var(--icon-color);"></i>
+                    <span class="ml-4 font-semibold link-text" data-lang="sendEmail">Send me an email</span>
+                </a>
+                <a href="https://wa.me/966590025566" target="_blank" class="flex items-center p-4 bg-black/5 rounded-xl transition-all duration-300 transform hover:scale-105 hover:bg-black/10">
+                    <i class="fab fa-whatsapp fa-lg text-green-500 w-6 text-center"></i>
+                    <span class="ml-4 font-semibold link-text" data-lang="whatsapp">WhatsApp</span>
+                </a>
+                <a href="https://www.instagram.com/rattanpalace.sa?igsh=MWduMWx0NGVqbmJ6NA%3D%3D&utm_source=qr" target="_blank" class="flex items-center p-4 bg-black/5 rounded-xl transition-all duration-300 transform hover:scale-105 hover:bg-black/10">
+                    <i class="fab fa-instagram fa-lg text-pink-500 w-6 text-center"></i>
+                    <span class="ml-4 font-semibold link-text" data-lang="instagram">Instagram</span>
+                </a>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        // --- LOGIQUE DE LA CARTE ---
+        const translations = {
+            en: { name: "Mohammed Zakzouk", jobTitle: "Head Manager of Rattan Palace", addContact: "Add to contacts", companyProfile: "Company Profile", callMe: "Call me", sendEmail: "Send me an email", whatsapp: "WhatsApp", instagram: "Instagram", cardTitle: "Digital Card - Mohammed Zakzouk", vCardFileName: "Mohammed_Zakzouk.vcf" },
+            ar: { name: "محمد زقزوق", jobTitle: "المدير العام لقصر الروطان", addContact: "أضف لجهات الاتصال", companyProfile: "ملف الشركة", callMe: "اتصل بي", sendEmail: "أرسل بريد إلكتروني", whatsapp: "واتساب", instagram: "انستغرام", cardTitle: "بطاقة رقمية - محمد زقزوق", vCardFileName: "محمد_زقزوق.vcf" }
+        };
+
+        const langEnBtn = document.getElementById('lang-en');
+        const langArBtn = document.getElementById('lang-ar');
+        let currentLang = 'ar';
+
+        function setLanguage(lang) {
+            currentLang = lang;
+            document.querySelectorAll('[data-lang]').forEach(el => { el.textContent = translations[lang][el.dataset.lang]; });
+            document.documentElement.lang = lang;
+            document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
+            document.title = translations[lang].cardTitle;
+            document.querySelectorAll('.icon').forEach(icon => {
+                const span = icon.nextElementSibling;
+                if (span) {
+                    const marginClass = span.classList.contains('ml-2') || span.classList.contains('mr-2') ? '2' : '4';
+                    if (lang === 'ar') {
+                        span.classList.remove(`ml-${marginClass}`);
+                        span.classList.add(`mr-${marginClass}`);
+                    } else {
+                        span.classList.remove(`mr-${marginClass}`);
+                        span.classList.add(`ml-${marginClass}`);
+                    }
+                }
+            });
+            if (lang === 'ar') {
+                langArBtn.classList.add('active');
+                langEnBtn.classList.remove('active');
+            } else {
+                langEnBtn.classList.add('active');
+                langArBtn.classList.remove('active');
+            }
+        }
+
+        langEnBtn.addEventListener('click', () => setLanguage('en'));
+        langArBtn.addEventListener('click', () => setLanguage('ar'));
+        
+        // --- GESTION DU THÈME ---
+        const themeToggle = document.getElementById('theme-toggle');
+        const themeIconLight = document.getElementById('theme-icon-light');
+        const themeIconDark = document.getElementById('theme-icon-dark');
+        const docElement = document.documentElement;
+
+        function applyTheme(theme) {
+            docElement.setAttribute('data-theme', theme);
+            localStorage.setItem('theme', theme);
+            if (theme === 'dark') {
+                themeIconLight.style.display = 'block';
+                themeIconDark.style.display = 'none';
+                themeIconLight.style.color = 'var(--brand-gold)';
+            } else {
+                themeIconLight.style.display = 'none';
+                themeIconDark.style.display = 'block';
+                 themeIconDark.style.color = 'var(--brand-dark)';
+            }
+        }
+
+        themeToggle.addEventListener('click', () => {
+            const newTheme = docElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+            applyTheme(newTheme);
+        });
+        
+        const savedTheme = localStorage.getItem('theme') || 'dark'; // Thème sombre par défaut
+        applyTheme(savedTheme);
+
+
+        function downloadVCard() {
+            const contact = { firstName: 'Mohammed', lastName: 'Zakzouk', title: 'Head Manager of Rattan Palace', phone: '+966590025566', email: 'Rattanpalace@hotmail.com', instagramUrl: 'https://www.instagram.com/rattanpalace.sa' };
+            const vCard = `BEGIN:VCARD\nVERSION:3.0\nN:${contact.lastName};${contact.firstName};;;\nFN:${contact.firstName} ${contact.lastName}\nTITLE:${contact.title}\nTEL;TYPE=CELL:${contact.phone}\nEMAIL:${contact.email}\nURL;type=INSTAGRAM:${contact.instagramUrl}\nEND:VCARD`;
+            const blob = new Blob([vCard], { type: 'text/vcard;charset=utf-8' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = translations[currentLang].vCardFileName;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        // --- ANIMATION DES PARTICULES ---
+        const cardContainer = document.getElementById('card-container');
+        const canvas = document.getElementById('card-animation-canvas');
+        const ctx = canvas.getContext('2d');
+        let particlesArray;
+
+        function setCanvasSize() {
+            canvas.width = cardContainer.offsetWidth;
+            canvas.height = cardContainer.offsetHeight;
+        }
+
+        class Particle {
+            constructor(x, y, directionX, directionY, size, color) {
+                this.x = x; this.y = y; this.directionX = directionX; this.directionY = directionY; this.size = size; this.color = color;
+            }
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2, false);
+                ctx.fillStyle = this.color;
+                ctx.fill();
+            }
+            update() {
+                this.y -= this.directionY;
+                if (this.y < -this.size) {
+                    this.y = canvas.height + this.size;
+                    this.x = Math.random() * canvas.width;
+                }
+                this.x += this.directionX;
+                if (this.x > canvas.width + this.size || this.x < -this.size) {
+                    this.directionX = -this.directionX;
+                }
+                this.draw();
+            }
+        }
+
+        function initParticles() {
+            particlesArray = [];
+            let numberOfParticles = (canvas.width * canvas.height) / 7000;
+            const theme = document.documentElement.getAttribute('data-theme') || 'dark';
+            const particleColor = getComputedStyle(document.documentElement).getPropertyValue('--particle-color');
+            
+            for (let i = 0; i < numberOfParticles; i++) {
+                let size = (Math.random() * 1.5) + 0.5;
+                let x = Math.random() * canvas.width;
+                let y = Math.random() * canvas.height;
+                let directionX = (Math.random() * 0.3) - 0.15;
+                let directionY = (Math.random() * 0.2) + 0.1;
+                particlesArray.push(new Particle(x, y, directionX, directionY, size, particleColor));
+            }
+        }
+
+        function animateParticles() {
+            requestAnimationFrame(animateParticles);
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            for (let i = 0; i < particlesArray.length; i++) {
+                particlesArray[i].update();
+            }
+        }
+
+        function setupAnimation() {
+            setCanvasSize();
+            initParticles();
+        }
+
+        let resizeTimer;
+        window.addEventListener('resize', () => {
+            clearTimeout(resizeTimer);
+            resizeTimer = setTimeout(setupAnimation, 250);
+        });
+
+        // Relancer l'initialisation des particules lors du changement de thème
+        themeToggle.addEventListener('click', initParticles);
+
+        document.addEventListener('DOMContentLoaded', () => {
+            setLanguage('ar');
+            window.addEventListener('load', () => {
+                setupAnimation();
+                animateParticles();
+            });
+        });
+
+    </script>
+</body>
+</html>
